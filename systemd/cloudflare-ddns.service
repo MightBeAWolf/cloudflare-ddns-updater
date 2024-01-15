@@ -1,0 +1,11 @@
+[Unit]
+Description=Cloudflare DDNS API with 1Password Token
+
+[Service]
+Type=simple
+Environment="ONEPASSWORD_TOKEN={{ op://Cloudflare DDNS/Cloudflare DDNS Service Token/credentail }}"
+ExecStart=/opt/cloudflare-ddns/cloudflare-ipv4.sh
+
+[Install]
+WantedBy=multi-user.target
+

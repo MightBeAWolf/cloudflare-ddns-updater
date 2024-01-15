@@ -1,17 +1,17 @@
 #!/bin/bash
-## change to "bin/sh" when necessary
+# change to "bin/sh" when necessary
 
-auth_email=""                                       # The email used to login 'https://dash.cloudflare.com'
-auth_method="token"                                 # Set to "global" for Global API Key or "token" for Scoped API Token
-auth_key=""                                         # Your API Token or Global API Key
-zone_identifier=""                                  # Can be found in the "Overview" tab of your domain
-record_name=""                                      # Which record you want to be synced
-ttl="3600"                                          # Set the DNS TTL (seconds)
-proxy="false"                                       # Set the proxy to true or false
-sitename=""                                         # Title of site "Example Site"
-slackchannel=""                                     # Slack Channel #example
-slackuri=""                                         # URI for Slack WebHook "https://hooks.slack.com/services/xxxxx"
-discorduri=""                                       # URI for Discord WebHook "https://discordapp.com/api/webhooks/xxxxx"
+auth_email="$(op read op://Cloudflare DDNS/Cloudflare API Token/username)"    # The email used to login 'https://dash.cloudflare.com'
+auth_method="token"                                                           # Set to "global" for Global API Key or "token" for Scoped API Token
+auth_key="$(op read op://Cloudflare DDNS/Cloudflare API Token/credential)"    # Your API Token or Global API Key
+zone_identifier="$(op read op://Cloudflare DDNS/Cloudflare API Token/zoneid)" # Can be found in the "Overview" tab of your domain
+record_name="$(op read op://Cloudflare DDNS/Cloudflare API Token/recordid)"   # Which record you want to be synced
+ttl="3600"                                                                    # Set the DNS TTL (seconds)
+proxy="false"                                                                 # Set the proxy to true or false
+sitename="Wolfbox"                                                            # Title of site "Example Site"
+# slackchannel=""                                                             # Slack Channel #example
+# slackuri=""                                                                 # URI for Slack WebHook "https://hooks.slack.com/services/xxxxx"
+# discorduri=""                                                               # URI for Discord WebHook "https://discordapp.com/api/webhooks/xxxxx"
 
 
 ###########################################
@@ -24,7 +24,7 @@ if [[ ! $ret == 0 ]]; then # In the case that cloudflare failed to return an ip.
     ip=$(curl -s https://api.ipify.org || curl -s https://ipv4.icanhazip.com)
 else
     # Extract just the ip from the ip line from cloudflare.
-    ip=$(echo $ip | sed -E "s/^ip=($ipv4_regex)$/\1/")
+    ip=$(echo "$ip" | sed -E "s/^ip=($ipv4_regex)$/\1/")
 fi
 
 # Use regex to check for proper IPv4 format.
@@ -65,7 +65,7 @@ fi
 ###########################################
 old_ip=$(echo "$record" | sed -E 's/.*"content":"(([0-9]{1,3}\.){3}[0-9]{1,3})".*/\1/')
 # Compare if they're the same
-if [[ $ip == $old_ip ]]; then
+if [[ $ip == "$old_ip" ]]; then
   logger "DDNS Updater: IP ($ip) for ${record_name} has not changed."
   exit 0
 fi

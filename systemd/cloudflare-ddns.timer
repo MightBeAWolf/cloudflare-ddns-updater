@@ -1,0 +1,10 @@
+[Unit]
+Description=Timer for Cloudflare DDNS API with 1Password Token
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=1min
+
+[Install]
+WantedBy=timers.target
+
